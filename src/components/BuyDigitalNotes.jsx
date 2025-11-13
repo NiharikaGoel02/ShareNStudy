@@ -55,7 +55,7 @@ function BuyDigitalNotes() {
             Seller: {note.sellerName?.fullName}
           </p>
           <p className="text-sm text-gray-500">
-            College: {note.collegeName?.collegeName}
+            College: {note.sellerName?.collegeName}
           </p>
 
           <a
@@ -85,7 +85,7 @@ function BuyDigitalNotes() {
             Seller: {note.sellerName?.fullName}
           </p>
           <p className="text-sm text-gray-500">
-            College: {note.collegeName?.collegeName}
+            College: {note.sellerName?.collegeName}
           </p>
 
           <button

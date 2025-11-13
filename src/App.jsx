@@ -61,9 +61,13 @@ function App() {
       withCredentials: true
     });
     console.log(response.data);
-    setUser(userData); // optional: update login state
-    localStorage.setItem('user', JSON.stringify(userData));
-    setShowAuthModal(false);     // optional: close modal
+    const loggedInUser = response.data.data.user;
+    console.log(loggedInUser)
+
+    setUser(loggedInUser);
+    localStorage.setItem('user', JSON.stringify(loggedInUser));
+
+    setShowAuthModal(false); // optional: close modal
   } catch (err) {
     console.error('Login failed', err);
   }
@@ -166,7 +170,7 @@ return (
       <Routes>
         <Route path="/" element={<LandingPage onSellClick={handleSellClick}
       onBuyClick={handleBuyClick}/>} />
-      <Route path="/login" element={<LoginForm />} /> 
+      {/* <Route path="/login" element={<LoginForm />} />  */}
         <Route path="/buy" element={<BuyPage />} />
         <Route path="/notes" element={<CategoryPage />} />
         <Route path="/sell" element={<SellPage user={user} onLogin={() => handleShowAuth("login")}/>} />
@@ -176,11 +180,12 @@ return (
         <Route path="/sell/digital-notes/paid" element={<PaidNotes user={user} onLogin={() => handleShowAuth("login")}/>} />
         <Route path="/sell/playlists" element={<PlaylistsCategory user={user} />} />
         <Route path="/buy" element={<BuyPage/>} />
-        <Route path="/buy/books" element={<BuyBooks/>} />
+        <Route path="/buy/books" element={<BuyBooks user={user}/>} />
         <Route path="/buy/digital-notes" element={<BuyDigitalNotes/>} />
         <Route path="/buy/playlists" element={<BuyPlaylist/>} />
         <Route path="/profile" element={<UserPage/>} />
         <Route path="/sell/books/donate" element={<DonateBooks/>} />
+
       </Routes>
     </>
   );

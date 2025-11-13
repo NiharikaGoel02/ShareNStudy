@@ -21,9 +21,11 @@ function BooksCategory({ user, onLogin }) {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get("/api/v1/books/getAll-books", {
+      const response = await axios.get("/api/v1/books/my-books", {
         withCredentials: true,
       });
+      //console.log("req.user in /my-books:", req.user);
+      //console.log("Books found:", books.length);
       setBooks(response.data.data || []);
     } catch (err) {
       console.error("Failed to fetch books", err);

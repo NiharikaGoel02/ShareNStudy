@@ -23,6 +23,7 @@ function LoginForm({ onLogin }) {
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Email */}
       <div>

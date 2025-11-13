@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 const publishABook =  asyncHandler(async(req, res) => {
     const {subjectName, classOrSemester, price} = req.body
@@ -151,6 +152,17 @@ const getBooksForBuyers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, books, "Books fetched successfully for buyers"));
 })
 
+const getMyBooks = asyncHandler(async (req, res) => {
+  const books = await Books.find({ sellerName: new mongoose.Types.ObjectId(req.user._id) })
+    .populate("sellerName", "fullName email")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, books, "Your books fetched successfully"));
+});
+
+
 
 export{
     publishABook,
@@ -158,5 +170,6 @@ export{
     updateBookDetails,
     updateBookImage,
     deleteBook,
-    getBooksForBuyers
+    getBooksForBuyers,
+    getMyBooks
 }

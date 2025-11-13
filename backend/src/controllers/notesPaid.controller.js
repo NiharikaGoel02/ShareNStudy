@@ -147,6 +147,24 @@ const getNotesPaidForBuyers =  asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, notesPaid, "Notes paid fetched successfully for buyers"))
 })
 
+const getMyNotesPaid = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized. Please login again.");
+  }
+
+  const myNotes = await NotesPaid.find({ sellerName: userId })
+    .populate("sellerName", "fullName email")
+    .populate("collegeName", "collegeName")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, myNotes, "My paid notes fetched successfully"));
+});
+
+
 
 export{
     publishANotespaid,
@@ -154,5 +172,6 @@ export{
     updateNotespaidImage,
     updateNotesPaidDetails,
     deleteNotespaid, 
-    getNotesPaidForBuyers
+    getNotesPaidForBuyers,
+    getMyNotesPaid
 }

@@ -15,17 +15,22 @@ const PlaylistsCategory = () => {
 
   // fetch playlists
   const fetchPlaylists = async () => {
-    try {
-      const res = await axios.get("/api/v1/playlist/getAll-playlists", {
-        withCredentials: true,
-      });
-      setPlaylists(res.data.data || []);
-    } catch (error) {
-      console.error("Error fetching playlists", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const response = await axios.get("/api/v1/playlist/my-playlists", {
+      withCredentials: true,
+    });
+    //console.log("req.user in /my-playlists:", req.user);
+    //console.log("Playlists found:", response.data.data.length);
+    setPlaylists(response.data.data || []);
+  } catch (err) {
+    console.error("Failed to fetch playlists", err);
+    setError("Failed to load playlists. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchPlaylists();

@@ -6,8 +6,9 @@ function Navbar({ user, onLogin, onSignup, onLogout, onHomeClick }) {
   const navigate = useNavigate();
 
   const goToProfile = () => {
-    navigate("/profile")
-  }
+    navigate("/profile");
+  };
+
   return (
     <nav className="bg-white shadow-lg border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,10 +26,16 @@ function Navbar({ user, onLogin, onSignup, onLogout, onHomeClick }) {
           <div className="flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2" onClick={goToProfile}>
+                {/* Profile */}
+                <div 
+                  className="flex items-center space-x-2 cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={goToProfile}
+                >
                   <User className="h-5 w-5 text-gray-600" />
                   <span className="text-gray-700 font-medium">{user.fullName}</span>
                 </div>
+
+                {/* Logout */}
                 <button
                   onClick={onLogout}
                   className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
@@ -41,13 +48,13 @@ function Navbar({ user, onLogin, onSignup, onLogout, onHomeClick }) {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={onLogin}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors border border-white/20 bg-white/10 shadow-lg backdrop-filter backdrop-blur-md"
                 >
                   Login
                 </button>
                 <button
                   onClick={onSignup}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#122f6f] hover:bg-[#0e3b8f] rounded-md transition-colors shadow-sm"
                 >
                   Sign Up
                 </button>

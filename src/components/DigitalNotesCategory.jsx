@@ -17,24 +17,29 @@ function DigitalNotesCategory({ user, onLogin }) {
   });
 
   // fetch notes
-  const fetchNotes = async () => {
-    if (!user) return;
-    setLoading(true);
-    setError("");
-    try {
-      const endpoint =
-        activeTab === "free"
-          ? "/api/v1/notesFree/getAll-notesFree"
-          : "/api/v1/notesPaid/getAll-notesPaid";
-      const res = await axios.get(endpoint, { withCredentials: true });
-      setNotes(res.data.data || []);
-    } catch (err) {
-      console.error("Failed to fetch notes", err);
-      setError("Failed to load notes.");
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchNotes = async () => {
+  if (!user) return;
+  setLoading(true);
+  setError("");
+  try {
+    const endpoint =
+      activeTab === "free"
+        ? "/api/v1/notesFree/my-notesFree"
+        : "/api/v1/notesPaid/my-notesPaid"; // ✅ switch to "my" endpoints
+    const res = await axios.get(endpoint, { withCredentials: true });
+
+    //console.log("req.user in /my-notes:", req.user);
+    //console.log("Notes found:", res.data.data.length);
+
+    setNotes(res.data.data || []);
+  } catch (err) {
+    console.error("Failed to fetch notes", err);
+    setError("Failed to load notes. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchNotes();

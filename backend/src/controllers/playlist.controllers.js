@@ -147,6 +147,15 @@ const getPlayListForBuyers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, playlist, "Playlist fetched successfully for buyers"));
 })
 
+const getMyPlaylists = asyncHandler(async (req, res) => {
+  const playlists = await Playlist.find({ sellerName: req.user._id })
+    .populate("sellerName", "fullName email")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, playlists, "Your playlists fetched successfully"));
+});
 
 
 export{
@@ -155,5 +164,6 @@ export{
     updatePlaylistImage,
     updatePlaylistDetails,
     deletePlaylist,
-    getPlayListForBuyers
+    getPlayListForBuyers,
+    getMyPlaylists
 }

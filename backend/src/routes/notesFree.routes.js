@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT, verifyJWToptional } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { deleteNotesfree, getAllNotesFree, getNotesFreeForBuyers, publishANotesFree, updateNotesFreeDetails, updateNotesFreePdf } from "../controllers/notesFree.controllers.js";
+import { deleteNotesfree, getAllNotesFree, getMyNotesFree, getNotesFreeForBuyers, publishANotesFree, updateNotesFreeDetails, updateNotesFreePdf } from "../controllers/notesFree.controllers.js";
 
 const router = Router();
 
@@ -11,6 +11,7 @@ router.get("/getAll-notesFree", verifyJWT, getAllNotesFree);
 router.post("/update-image", verifyJWT, upload.single("pdf") ,updateNotesFreePdf);
 router.patch("/update-notesFreeDetails", verifyJWT, updateNotesFreeDetails);
 router.delete("/delete-notesFree/:notesId", verifyJWT, deleteNotesfree)
+router.get("/my-notesFree", verifyJWT, getMyNotesFree)
 
 //buy routes
 router.get("/buyer-notesFree", verifyJWToptional, getNotesFreeForBuyers);

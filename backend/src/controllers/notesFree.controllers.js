@@ -5,48 +5,50 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-const publishANotesFree =  asyncHandler(async(req, res) => {
-    const {subjectName, classOrSemester} = req.body
+const publishANotesFree = asyncHandler(async (req, res) => {
+  const { subjectName, classOrSemester } = req.body;
 
-    if(
-        [subjectName, classOrSemester].some((field) => 
-        field?.trim() === "")
-    ){
-        throw new ApiError(400, "All Fields are required")
-    }
-    console.log(req.files);
+  if ([subjectName, classOrSemester].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "All Fields are required");
+  }
 
-    const pdfLocalPath = req.file?.path
+  console.log(req.files);
 
-    if(!pdfLocalPath){
-        throw new ApiError(400, "document is required")
-    }
+  const pdfLocalPath = req.file?.path;
 
-    const pdf = await uploadOnCloudinary(pdfLocalPath)
-    console.log("Uploading to Cloudinary from path:", pdfLocalPath);
+  if (!pdfLocalPath) {
+    throw new ApiError(400, "document is required");
+  }
 
-    if(!pdf){
-        throw new ApiError(500, "Document upload required")
-    }
+  // Upload to Cloudinary
+  const pdf = await uploadOnCloudinary(pdfLocalPath);
+  console.log("Uploading to Cloudinary from path:", pdfLocalPath);
 
-    const currentUser = await User.findById(req.user._id);
-    if(!currentUser){
-        throw new ApiError(500, "Document upload failed")
-    }
+  if (!pdf) {
+    throw new ApiError(500, "Document upload failed");
+  }
 
-    const notesFree = await Notesfree.create({
-        subjectName,
-        classOrSemester,
-        pdf : pdf.secure_url,
-        sellerName : currentUser._id,
-        collegeName : currentUser._id
-    })
+  // Generate download URL by inserting fl_attachment
+  const downloadUrl = pdf.secure_url.replace("/upload/", "/upload/fl_attachment/");
 
-    return res
+  const currentUser = await User.findById(req.user._id);
+  if (!currentUser) {
+    throw new ApiError(500, "User not found");
+  }
+
+  const notesFree = await Notesfree.create({
+    subjectName,
+  classOrSemester,
+  pdf: pdf.secure_url, // satisfy schema requirement
+  sellerName: currentUser._id,
+  collegeName: currentUser._id
+  });
+
+  return res
     .status(201)
-    .json(new ApiResponse(200, notesFree, "Document listed successfully"))
+    .json(new ApiResponse(200, notesFree, "Document listed successfully"));
+});
 
-})
 
 const getAllNotesFree = asyncHandler(async(req, res) =>{
     const notesFree = await Notesfree.find().populate("sellerName", "fullName email")
@@ -145,6 +147,24 @@ const getNotesFreeForBuyers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, notesFree, "Notes free fetched successfully for buyers"));
 })
 
+const getMyNotesFree = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized. Please login again.");
+  }
+
+  const myNotes = await Notesfree.find({ sellerName: userId })
+    .populate("sellerName", "fullName email")
+    .populate("collegeName", "collegeName")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, myNotes, "My free notes fetched successfully"));
+});
+
+
 
 export{
     publishANotesFree,
@@ -152,5 +172,6 @@ export{
     updateNotesFreePdf,
     updateNotesFreeDetails,
     deleteNotesfree, 
-    getNotesFreeForBuyers
+    getNotesFreeForBuyers,
+    getMyNotesFree
 }
